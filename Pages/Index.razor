@@ -1,0 +1,42 @@
+﻿@page "/"
+@using  BlazorLocalStorageExample.Utils
+@inject ILocalStorage LocalStorage
+<h1>Local Storage Example</h1>
+
+<div class="row mt-3">
+    <div class="col-5">
+        <input class="form-control" @bind-value="Name" />
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-5">
+        <button class="btn btn-primary" @onclick="SaveNameInLocalStorage">Save</button>
+    </div>
+</div>
+
+<label class="mt-3">From local storage: @Name</label>
+
+
+@code{
+    public string Name { get; set; }
+
+    protected async Task SaveNameInLocalStorage()
+    {
+        await LocalStorage.SetAsync("BlazorLocalStorageExample", Name);
+    }
+
+    protected async Task GetNameFromLocalStorage()
+    {
+        Name = await LocalStorage.GetAsync<string>("BlazorLocalStorageExample");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            await GetNameFromLocalStorage();
+            StateHasChanged();
+        }
+    }
+}
